@@ -149,7 +149,7 @@ ${GetFileExt} ${MPC_BE_NAME} $R0 ; $R0="exe"
             ExecWait '"${MPC_BEDownLocalPATH}" /VERYSILENT /NORESTART'
             ;exe ¼³Ä¡
         ${ElseIf} ${MPC_BE_FILENAME_Ext} == '7z'
-            File ".\_add_on\7z.exe"
+            File "${AddON_DIR}\7z.exe"
 ;            nsExec::Exec '"$INSTDIR\7z.exe" x "${MPC_BEDownLocalPATH}" """-aoa"'
 ;            Rename $INSTDIR\${MPC_BE_FILENAME} $INSTDIR\MPC_BE
 

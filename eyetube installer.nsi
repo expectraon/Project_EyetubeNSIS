@@ -12,6 +12,8 @@ RequestExecutionLevel admin
 ###########################################################
 # define value Settings
 
+;!define SKIP
+
 ;----------------------------------------------------------
 ; 기본 경로 설정
 
@@ -152,8 +154,15 @@ RequestExecutionLevel admin
 ;----------------------------------------------------------
 ;
 
-!define OUTFILE_NAME "EyetubeSetup.exe"
 
+
+!ifdef SKIP
+    SilentInstall silent
+    ;SilentUnInstall silent ; (언인스톨시 진행창을 보여주지 않아야 할 경우)
+    !define OUTFILE_NAME "EyetubeSetup_silent.exe"
+!else
+     !define OUTFILE_NAME "EyetubeSetup.exe"
+!endif
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "${OUTFILE_NAME}"
