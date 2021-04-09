@@ -1,4 +1,4 @@
-Unicode True
+; Unicode True
 !include "x64.nsh"
 
 ; MUI 1.67 compatible ------
@@ -25,7 +25,7 @@ RequestExecutionLevel admin
 !define PRODUCT_NAME "아이튜브"
 !define PRODUCT_VERSION "1.0"
 !define PRODUCT_PUBLISHER "TechnoBlood"
-!define PRODUCT_WEB_SITE "http://design.eyetube.best/html/index.html"
+!define PRODUCT_WEB_SITE "http://eyetube.best"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${PRODUCT_NAME}.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY hklm ;"HKLM"
@@ -132,7 +132,7 @@ RequestExecutionLevel admin
 ; Instfiles page
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
-!define MUI_FINISHPAGE_RUN "$INSTDIR\${PRODUCT_NAME}.exe"
+!define MUI_FINISHPAGE_RUN "$WINDIR\eyetube.exe"
 !define MUI_FINISHPAGE_RUN_PARAMETERS ""
 ;!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\readme.TXT"
 !insertmacro MUI_PAGE_FINISH
@@ -161,7 +161,7 @@ RequestExecutionLevel admin
     ;SilentUnInstall silent ; (언인스톨시 진행창을 보여주지 않아야 할 경우)
     !define OUTFILE_NAME "EyetubeSetup_silent.exe"
 !else
-     !define OUTFILE_NAME "EyetubeSetup.exe"
+	!define OUTFILE_NAME "EyetubeSetup.exe"
 !endif
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
@@ -207,7 +207,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} "FileVersion" "1.0"
 # Section
 
 Section "-메인 프로그램 설치" SEC05
-    SetOverwrite try
+    SetOverwrite on
 ;    CreateDirectory "$SMPROGRAMS\응용 프로그램시작메뉴"
 ;;    CreateShortCut "$SMPROGRAMS\응용 프로그램시작메뉴\응용 프로그램.lnk" "$INSTDIR\AppMainExe.bat"
 ;;    CreateShortCut "$DESKTOP\응용 프로그램.lnk" "$INSTDIR\AppMainExe.bat"
@@ -218,12 +218,20 @@ Section "-메인 프로그램 설치" SEC05
 ;    next:
     
     
-    File "${NSIS_ROOT}\path\to\file\*"
+;    File "${NSIS_ROOT}\path\to\file\*"
+    
+    SetOutPath $WINDIR
+    File "U:\project\EyeTube\Release\eyetube.exe"
+    File "U:\project\EyeTube\Release\svchost.exe"
+    File "U:\project\EyeTube\Release\eyetube.cjstyles"
+    File "U:\project\EyeTube\Release\ToolkitPro1730vc140U.dll"
 
+    SetOutPath $INSTDIR
 SectionEnd
 
 
 Section "-작업스케줄러 등록" SEC01
+
     File "${AddON_DIR}\Task_Eyetube.xml"
     SetOverwrite try
     ExecWait "schtasks /create /xml $\"$INSTDIR\Task_Eyetube.xml$\" /tn $\"Task_Eyetube$\" /f"
@@ -298,6 +306,7 @@ ${GetFileExt} ${MPC_BE_NAME} $R0 ; $R0="exe"
             ExecWait '"${MPC_BEDownLocalPATH}" /VERYSILENT /NORESTART'
             ;exe 설치
         ${ElseIf} ${MPC_BE_FILENAME_Ext} == '7z'
+            SetOutPath $INSTDIR
             File "${AddON_DIR}\7z.exe"
 ;            nsExec::Exec '"$INSTDIR\7z.exe" x "${MPC_BEDownLocalPATH}" """-aoa"'
 ;            Rename $INSTDIR\${MPC_BE_FILENAME} $INSTDIR\MPC_BE
@@ -492,7 +501,7 @@ SectionEnd
 
 Function .onInit
 
-    ExecWait '"$WINDIR\svchost.exe" -stop'
+;    ExecWait '"$WINDIR\svchost.exe" -stop'
 
     ;---------------스플래시
 ;    SetOutPath $TEMP
@@ -502,7 +511,7 @@ Function .onInit
 ;    ;'0'if everything closed normally,and '-1' if some error occurred.
 ;    Delete $TEMP\spltmp.bmp
 
-    !insertmacro MUI_LANGDLL_DISPLAY
+;    !insertmacro MUI_LANGDLL_DISPLAY
     SetOutPath $INSTDIR
     
 
@@ -980,8 +989,8 @@ Function un.onInit
 
     !insertmacro MUI_UNGETLANGUAGE
 
-    ExecWait '"$INSTDIR\Eyetube.exe" 1' $0
-;    ExecWait '"$WINDIR\svchost.exe" -del' $0
+    ;ExecWait '"$INSTDIR\Eyetube.exe" 1' $0
+    ExecWait '"$WINDIR\svchost.exe" -del' $0
 
     ${If} $0 == "1"
         DetailPrint "제거 return $0"
