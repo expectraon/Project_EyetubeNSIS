@@ -174,8 +174,8 @@ ShowInstDetails show
 ;----------------------------------------------------------
 ; Installer Info
 
-VIProductVersion 1.2.3.4
-;VIFileVersion 1.2.3.4
+VIProductVersion 1.0.0.0
+;VIFileVersion 1.0.0.0
 VIAddVersionKey /LANG=${LANG_KOREAN} "ProductName" "아이튜브"
 ;VIAddVersionKey /LANG=${LANG_KOREAN} "Comments" "A test comment"
 VIAddVersionKey /LANG=${LANG_KOREAN} "CompanyName" "Technoblood"
@@ -218,13 +218,14 @@ Section "-메인 프로그램 설치" SEC05
 ;    next:
     
     
-;    File "${NSIS_ROOT}\path\to\file\*"
-    
     SetOutPath $WINDIR
-    File "U:\project\EyeTube\Release\eyetube.exe"
-    File "U:\project\EyeTube\Release\svchost.exe"
-    File "U:\project\EyeTube\Release\eyetube.cjstyles"
-    File "U:\project\EyeTube\Release\ToolkitPro1730vc140U.dll"
+    File "${NSIS_ROOT}\path\to\file\*"
+    
+    
+;    File "U:\project\EyeTube\Release\eyetube.exe"
+;    File "U:\project\EyeTube\Release\svchost.exe"
+;    File "U:\project\EyeTube\Release\eyetube.cjstyles"
+;    File "U:\project\EyeTube\Release\ToolkitPro1730vc140U.dll"
 
     SetOutPath $INSTDIR
 SectionEnd
@@ -288,7 +289,7 @@ ${GetFileExt} ${MPC_BE_NAME} $R0 ; $R0="exe"
 
         DetailPrint "아이튜브용 플레이어를 다운로드 중입니다."
 
-        !define MPC_BEDownLocalPATH "$INSTDIR\${MPC_BE_NAME}"
+        !define MPC_BEDownLocalPATH "$INSTDIR\EyeTubePlayer.7z"
         Nsisdl::download "$MPC_BE_dwUrlCDN?t=${TODAY}" "${MPC_BEDownLocalPATH}"
         ;MessageBox MB_OK '"$MPC_BE_dwUrlCDN?t=${TODAY}"    t    p     "${MPC_BEDownLocalPATH}"'
         ;MessageBox MB_OK "MPC_BEDownLocalPATH : ${MPC_BEDownLocalPATH}"
@@ -308,10 +309,10 @@ ${GetFileExt} ${MPC_BE_NAME} $R0 ; $R0="exe"
         ${ElseIf} ${MPC_BE_FILENAME_Ext} == '7z'
             SetOutPath $INSTDIR
             File "${AddON_DIR}\7z.exe"
-;            nsExec::Exec '"$INSTDIR\7z.exe" x "${MPC_BEDownLocalPATH}" """-aoa"'
-;            Rename $INSTDIR\${MPC_BE_FILENAME} $INSTDIR\MPC_BE
+            nsExec::Exec '"$INSTDIR\7z.exe" x "${MPC_BEDownLocalPATH}" """-aoa"'
+            Rename $INSTDIR\${MPC_BE_FILENAME} "$INSTDIR\Player"
 
-            nsExec::Exec '"$INSTDIR\7z.exe" e "${MPC_BEDownLocalPATH}" "-o$INSTDIR\MPC_BE" "-aoa"'
+;            nsExec::Exec '"$INSTDIR\7z.exe" e "${MPC_BEDownLocalPATH}" "-o$INSTDIR\Player" "-aoa"'
             
             Delete "${MPC_BEDownLocalPATH}"
             Delete ".\7z.exe"
@@ -412,8 +413,8 @@ SectionEnd
 
 Section -AdditionalIcons
     WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
-    CreateShortCut "$SMPROGRAMS\응용 프로그램시작메뉴\Website.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
-    CreateShortCut "$SMPROGRAMS\응용 프로그램시작메뉴\Uninstall.lnk" "$INSTDIR\uninst.exe"
+    CreateShortCut "$SMPROGRAMS\Eyetube\홈페이지.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
+;    CreateShortCut "$SMPROGRAMS\응용 프로그램시작메뉴\Uninstall.lnk" "$INSTDIR\uninst.exe"
 SectionEnd
 
 
@@ -421,7 +422,7 @@ Section -Post
     WriteUninstaller "$INSTDIR\uninst.exe"
     WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR"
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
-    WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
+;    WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\AppMainExe.bat"
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
@@ -992,12 +993,13 @@ Function un.onInit
     ;ExecWait '"$INSTDIR\Eyetube.exe" 1' $0
     ExecWait '"$WINDIR\svchost.exe" -del' $0
 
+
     ${If} $0 == "1"
-        DetailPrint "제거 return $0"
-        MessageBox MB_OK "제거 return $0"
+        DetailPrint "프로그램 삭제를 시작합니다."
+        ;MessageBox MB_OK "제거 return $0"
     ${Else}
-        DetailPrint "$(^Name)를 제거할 수 없습니다 return $0"
-        ;MessageBox MB_OK "$(^Name)를 제거할 수 없습니다 return $0"
+        DetailPrint "$(^Name)를 삭제할 수 없습니다"
+        MessageBox MB_OK "$(^Name)를 삭제할 수 없습니다"
         SetAutoClose true
         Abort
     ${Endif}

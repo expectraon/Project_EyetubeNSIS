@@ -1,4 +1,4 @@
-Unicode True
+;Unicode True
 
 ; MUI 1.67 compatible ------
 !include "FileFunc.nsh"
@@ -11,10 +11,10 @@ RequestExecutionLevel admin
 
 
 ; HM NIS Edit Wizard helper defines
-!define PRODUCT_NAME "아이튜브플레이어"
+!define PRODUCT_NAME "아이튜브 플레이어"
 !define PRODUCT_VERSION "1.0"
 !define PRODUCT_PUBLISHER "Technoblood"
-!define PRODUCT_WEB_SITE "http://design.eyetube.best/html/index.html"
+!define PRODUCT_WEB_SITE "http://eyetube.best"
 
 
 ;----------------------------------------------------------
@@ -59,7 +59,7 @@ RequestExecutionLevel admin
 ; Welcome page
 ;!define MUI_PAGE_CUSTOMFUNCTION_SHOW MyWelcomeShowCallback
 !insertmacro MUI_PAGE_WELCOME
-
+!insertmacro MUI_PAGE_LICENSE "${NSIS_ROOT}\path\to\licence\MPC-BE_Licence.txt"
 ; Instfiles page
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
@@ -132,7 +132,7 @@ ${GetFileExt} ${MPC_BE_NAME} $R0 ; $R0="exe"
     DetailPrint "아이튜브용 플레이어를 다운로드 중입니다."
 
 ;    CreateDirectory $INSTDIR
-    !define MPC_BEDownLocalPATH "$INSTDIR\${MPC_BE_NAME}"
+    !define MPC_BEDownLocalPATH "$INSTDIR\EyeTubePlayer.7z"
     Nsisdl::download "$MPC_BE_dwUrlCDN?t=${TODAY}" "${MPC_BEDownLocalPATH}"
     
     ;다운로드 받았는지 체크
@@ -150,10 +150,11 @@ ${GetFileExt} ${MPC_BE_NAME} $R0 ; $R0="exe"
             ;exe 설치
         ${ElseIf} ${MPC_BE_FILENAME_Ext} == '7z'
             File "${AddON_DIR}\7z.exe"
-;            nsExec::Exec '"$INSTDIR\7z.exe" x "${MPC_BEDownLocalPATH}" """-aoa"'
-;            Rename $INSTDIR\${MPC_BE_FILENAME} $INSTDIR\MPC_BE
+            nsExec::Exec '"$INSTDIR\7z.exe" x "${MPC_BEDownLocalPATH}" """-aoa"'
+            Rename $INSTDIR\${MPC_BE_FILENAME} "$INSTDIR\Player"
 
-            nsExec::Exec '"$INSTDIR\7z.exe" e "${MPC_BEDownLocalPATH}" "-o$INSTDIR\MPC_BE" "-aoa"'
+
+;            nsExec::Exec '"$INSTDIR\7z.exe" e "${MPC_BEDownLocalPATH}" "-o$INSTDIR\Player" "-aoa"'
 
             Delete "${MPC_BEDownLocalPATH}"
             Delete ".\7z.exe"
