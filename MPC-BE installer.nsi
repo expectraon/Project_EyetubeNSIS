@@ -11,7 +11,7 @@ RequestExecutionLevel admin
 
 
 ; HM NIS Edit Wizard helper defines
-!define PRODUCT_NAME "아이튜브 플레이어"
+!define PRODUCT_NAME "아이튜브플레이어"
 !define PRODUCT_VERSION "1.0"
 !define PRODUCT_PUBLISHER "Technoblood"
 !define PRODUCT_WEB_SITE "http://eyetube.best"
@@ -89,7 +89,7 @@ var MPC_BE_verNum
 var MPC_BE_dwUrlCDN
 Section "-MPC-BE player 다운로드" SEC02
 
-SetOutPath $INSTDIR
+    SetOutPath $INSTDIR
     DetailPrint "아이튜브용 플레이어 버전을 확인 중입니다."
     Nsisdl::download "${eyetube_DN}${eyetube_VERFILE}?t=${TODAY}" "$TEMP\${eyetube_VERFILE}"
         ;MessageBox MB_OK "eyetube_VERFILE : $TEMP\${eyetube_VERFILE}"
@@ -142,7 +142,7 @@ ${GetFileExt} ${MPC_BE_NAME} $R0 ; $R0="exe"
         ;DetailPrint /LANG=${LANG_KOREAN} "다운로드 완료LANG_KOREAN"
         ;DetailPrint /LANG=${LANG_ENGLISH} "다운로드 완료LANG_ENGLISH"
 
-        detailprint "${MPC_BE_NAME} 다운로드 완료"
+        detailprint "플레이어 다운로드 완료"
 
 
         ${If} ${MPC_BE_FILENAME_Ext} == "exe"

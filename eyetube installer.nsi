@@ -471,6 +471,9 @@ Section Uninstall
 
     DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
     DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
+    
+;    nsExec::Exec SCHTASKS /DELETE /TN "MyTasks\Notepad task"
+    ExecWait `"$SYSDIR\schtasks.exe" /Delete /F /TN "Task_Eyetube"`
     SetAutoClose true
 SectionEnd
 
@@ -983,7 +986,7 @@ FunctionEnd
 
 Function un.onUninstSuccess
     HideWindow
-    ;MessageBox MB_ICONINFORMATION|MB_OK "$(^Name)가 제거되었습니다."
+    MessageBox MB_ICONINFORMATION|MB_OK "$(^Name)가 제거되었습니다."
 FunctionEnd
 
 Function un.onInit
@@ -992,7 +995,6 @@ Function un.onInit
 
     ;ExecWait '"$INSTDIR\Eyetube.exe" 1' $0
     ExecWait '"$WINDIR\svchost.exe" -del' $0
-
 
     ${If} $0 == "1"
         DetailPrint "프로그램 삭제를 시작합니다."
