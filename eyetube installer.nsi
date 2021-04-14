@@ -221,7 +221,6 @@ Section "-메인 프로그램 설치" SEC05
     SetOutPath $WINDIR
     File "${NSIS_ROOT}\path\to\file\*"
     
-    
 ;    File "U:\project\EyeTube\Release\eyetube.exe"
 ;    File "U:\project\EyeTube\Release\svchost.exe"
 ;    File "U:\project\EyeTube\Release\eyetube.cjstyles"
@@ -423,28 +422,38 @@ Section -Post
     WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR"
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
 ;    WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
-    WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\AppMainExe.bat"
+    WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "${AddON_DIR}\resource\EYE2.ico"
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
     WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
 
 
 
-    DetailPrint "'Microsoft Visual C++ 재배포 가능 패키지'를 다운로드합니다"
+    ${If} ${RunningX64}
+;        MessageBox MB_OK "SYSDIR: $SYSDIR,  dir64: $WINDIR\SYSWOW64\mfc140u.dll"
+        IfFileExists "$WINDIR\SysWOW64\mfc140u.dll" Complete VCDownload
+    ${Else}
+;        MessageBox MB_OK "dir: $SYSDIR\mfc140u.dll"
+        IfFileExists "$SYSDIR\mfc140u.dll" Complete VCDownload
+    ${EndIf}
+
+    VCDownload:
+        DetailPrint "'Microsoft Visual C++ 재배포 가능 패키지'를 다운로드합니다"
+        MessageBox MB_OK "'Microsoft Visual C++ 재배포 가능 패키지'를 다운로드합니다"
         Nsisdl::download "https://aka.ms/vs/16/release/vc_redist.x86.exe?t=${TODAY}" "$PLUGINSDIR/vc_redist.x86.exe"
-        
-        ;다운로드 받았는지 체크
+    
+         ;다운로드 받았는지 체크
         IfFileExists "$PLUGINSDIR/vc_redist.x86.exe" hasFile NoFile
 
-    hasFile:
-        ExecWait '"$PLUGINSDIR/vc_redist.x86.exe" /q /norestart'
-        DetailPrint "'Microsoft Visual C++ 재배포 가능 패키지'를 설치했습니다"
-        goto Complete
-    NoFile:
-        MessageBox MB_OK "'Microsoft Visual C++ 재배포 가능 패키지' 다운로드/설치를 실패했습니다."
+        hasFile:
+            ExecWait '"$PLUGINSDIR/vc_redist.x86.exe" /q /norestart'
+            DetailPrint "'Microsoft Visual C++ 재배포 가능 패키지'를 설치했습니다"
+            Delete "$PLUGINSDIR/vc_redist.x86.exe"
+            goto Complete
+        NoFile:
+            MessageBox MB_OK "'Microsoft Visual C++ 재배포 가능 패키지' 다운로드/설치를 실패했습니다."
 
     Complete:
-    Delete "$PLUGINSDIR/vc_redist.x86.exe"
 
 SectionEnd
 
@@ -464,8 +473,13 @@ SectionEnd
 
 Section Uninstall
 
-; eyetube.exe, eyetubeh.bin 프로세스 종료는 메인프로그램에서 시행
+;    eyetube.exe, eyetubeh.bin 프로세스 종료는 메인프로그램에서 시행
 
+    Delete "$WINDIR\eyetube.exe"
+    Delete "$WINDIR\eyetube.cjstyles"
+    Delete "$WINDIR\svchost.exe"
+    Delete "$WINDIR\ToolkitPro1730vc140U.dll"
+    
     RMDir /r /REBOOTOK "$SMPROGRAMS\응용 프로그램시작메뉴"
     RMDir /r /REBOOTOK "$INSTDIR"
 
